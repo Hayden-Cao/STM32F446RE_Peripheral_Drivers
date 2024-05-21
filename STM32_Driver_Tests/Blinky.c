@@ -8,6 +8,8 @@ void delay()
 	for(int i = 0; i < 500000; i++);
 }
 
+// GPIOA9 = D8 on STM32F446RE Nucleo Board
+
 int main(void)
 {
 	GPIO_Handle_t GPIO_LED;
