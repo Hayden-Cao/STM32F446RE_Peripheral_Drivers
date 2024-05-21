@@ -8,7 +8,13 @@ void Delay(void)
 	for(int i = 0; i < 500000; i++);
 }
 
-
+/*
+	GPIOA9, GPIOA8, GPIOC7 = Output
+	On STM32F446RE Nucleo Board: GPIOA9 = D8, GPIOA8 = D7, GPIOC7 = D9
+ 
+	GPIOB10 = Input
+ 	On STM32F446RE Nucleo Board: GPIOB10 = D6
+*/
 int main(void)
 {
 	GPIO_Handle_t GPIO_LED1;
