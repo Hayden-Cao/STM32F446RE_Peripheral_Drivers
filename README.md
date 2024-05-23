@@ -15,7 +15,7 @@ SPI Driver: In Progress
 
 I2C Driver: To-Do
 
-UART Driver: To-Do
+USART Driver: To-Do
 
 
 **Figure of STM32F446RE Nucleo Board Pinout**
