@@ -212,7 +212,65 @@ typedef struct
 										(x == GPIOB) ? 7 : 0)
 
 
+/*
+ * SYSCFG Clock Enable
+ */
+
 #define SYSCFG_PCLK_EN() 				(RCC->APB2ENR |= (1 << 14))
+
+/*
+ * Interrupt Request Positions from Table 38 of reference manual
+ */
+
+#define IRQ_EXTI0 			6
+#define IRQ_EXTI1			7
+#define IRQ_EXTI2 			8
+#define IRQ_EXTI3 			9
+#define IRQ_EXTI4 			10
+#define IRQ_EXTI9_5 		23
+#define IRQ_EXTI15_10		40
+
+/*
+ * NVIC ISERx and ICERx Register Addresses
+ * ISER = Set Reg, ICER = Clear Reg
+ * Register Addresses from ARM Cortex M4 Generic User Guide
+ */
+
+#define NVIC_ISER0						((__vo uint32_t*)0xE000E100)
+#define NVIC_ISER1						((__vo uint32_t*)0xE000E104)
+#define NVIC_ISER2						((__vo uint32_t*)0xE000E108)
+#define NVIC_ISER3						((__vo uint32_t*)0xE000E10C)
+
+#define NVIC_ICER0						((__vo uint32_t*)0xE000E180)
+#define NVIC_ICER1						((__vo uint32_t*)0xE000E184)
+#define NVIC_ICER2						((__vo uint32_t*)0xE000E188)
+#define NVIC_ICER3						((__vo uint32_t*)0xE000E18C)
+
+#define NVIC_IRQ_PRIO0					0
+#define NVIC_IRQ_PRIO1					1
+#define NVIC_IRQ_PRIO2					2
+#define NVIC_IRQ_PRIO3					3
+#define NVIC_IRQ_PRIO4					4
+#define NVIC_IRQ_PRIO5					5
+#define NVIC_IRQ_PRIO6					6
+#define NVIC_IRQ_PRIO7					7
+#define NVIC_IRQ_PRIO8					8
+#define NVIC_IRQ_PRIO9					9
+#define NVIC_IRQ_PRIO10					10
+#define NVIC_IRQ_PRIO11					11
+#define NVIC_IRQ_PRIO12					12
+#define NVIC_IRQ_PRIO13					13
+#define NVIC_IRQ_PRIO14					14
+#define NVIC_IRQ_PRIO15					15
+
+/*
+ * Priority Interrupt Register Addresses
+ */
+
+// only defining the base addr because there are 59 priority registers
+#define NVIC_PR_BASEADDR				((__vo uint32_t*)0xE000E400)
+// last 4 bits of each register is not used
+#define NUM_NOT_USED_PR_BITS			4
 
 
 
