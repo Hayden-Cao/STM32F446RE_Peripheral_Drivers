@@ -204,12 +204,11 @@ typedef struct
 
 #define GPIO_BASEADDR_TO_CODE(x)	  (	(x == GPIOA) ? 0 : \
 										(x == GPIOB) ? 1 : \
-										(x == GPIOB) ? 2 : \
-										(x == GPIOB) ? 3 : \
-										(x == GPIOB) ? 4 : \
-										(x == GPIOB) ? 5 : \
-										(x == GPIOB) ? 6 : \
-										(x == GPIOB) ? 7 : 0)
+										(x == GPIOC) ? 2 : \
+										(x == GPIOD) ? 3 : \
+										(x == GPIOE) ? 4 : \
+										(x == GPIOF) ? 5 : \
+										(x == GPIOG) ? 6 : 0 )
 
 
 /*
@@ -222,13 +221,13 @@ typedef struct
  * Interrupt Request Positions from Table 38 of reference manual
  */
 
-#define IRQ_EXTI0 			6
-#define IRQ_EXTI1			7
-#define IRQ_EXTI2 			8
-#define IRQ_EXTI3 			9
-#define IRQ_EXTI4 			10
-#define IRQ_EXTI9_5 		23
-#define IRQ_EXTI15_10		40
+#define IRQ_EXTI0 						6
+#define IRQ_EXTI1						7
+#define IRQ_EXTI2 						8
+#define IRQ_EXTI3 						9
+#define IRQ_EXTI4 						10
+#define IRQ_EXTI9_5 					23
+#define IRQ_EXTI15_10					40
 
 /*
  * NVIC ISERx and ICERx Register Addresses
