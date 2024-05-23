@@ -4,7 +4,7 @@ These drivers serve as a Hardware Abstraction Layer for the input and output per
 
 The drivers are written based off information given from the Udemy Course: Mastering Microcontroller and Embedded Driver Development by Fastbit Brain Academy and the microcontroller reference manual.
 
-There will be drivers for GPIO and serial communications such as I2C, SPI, and UART.
+There will be drivers for GPIO and serial communications such as I2C, SPI, and USART.
 
 
 Current Progress: 
