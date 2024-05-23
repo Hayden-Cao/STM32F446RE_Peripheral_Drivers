@@ -6,6 +6,18 @@ The drivers are written based off information given from the Udemy Course: Maste
 
 There will be drivers for GPIO and serial communications such as I2C, SPI, and UART.
 
+
+Current Progress: 
+
+GPIO Driver: Complete
+
+SPI Driver: In Progress
+
+I2C Driver: To-Do
+
+UART Driver: To-Do
+
+
 **Figure of STM32F446RE Nucleo Board Pinout**
 
 ![image](https://github.com/Hayden-Cao/STM32F446RE_Peripheral_Drivers/assets/130268332/57bf546d-4584-4f7b-b685-852a6cc31256)
