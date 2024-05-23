@@ -11,7 +11,7 @@ void Delay(void)
 int main(void)
 {
 	// All Pins are push pull with no pull up resistors
-	// Only resistors needed are external current limiting resistors
+	// Only resistors needed are external current limiting resistors for external leds
 	GPIO_Handle_t GPIO_LED1, GPIO_BTN;
 
 	GPIO_LED1.pGPIOx = GPIOB;
