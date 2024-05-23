@@ -129,6 +129,12 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 			EXTI->RTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
 		}
 
+
+		// make sure the MODER is set to input
+		temp = GPIO_MODE_IN << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+		pGPIOHandle->pGPIOx->MODER &= ~( 0x3 << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)); //clearing
+		pGPIOHandle->pGPIOx->MODER |= temp; //setting
+
 		uint8_t temp1 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 4;
 		uint8_t temp2 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 4;
 		uint8_t portcode = GPIO_BASEADDR_TO_CODE(pGPIOHandle->pGPIOx);
@@ -139,10 +145,14 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 	}
 
 	// Output type Set;
-	temp = 0;
-	temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinOPType << (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-	pGPIOHandle->pGPIOx->ODR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-	pGPIOHandle->pGPIOx->ODR |= temp;
+
+	if (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_OUT)
+	{
+		temp = 0;
+		temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinOPType << (pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+		pGPIOHandle->pGPIOx->ODR &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+		pGPIOHandle->pGPIOx->ODR |= temp;
+	}
 
 	// Speed Set
 	temp = 0;
@@ -162,11 +172,8 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 
 	if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_ALTFN)
 	{
-		//configure the alt function registers.
-		uint8_t temp1, temp2;
-
-		temp1 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 8;
-		temp2 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber  % 8;
+		uint8_t temp1 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 8;
+		uint8_t temp2 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber  % 8;
 		pGPIOHandle->pGPIOx->AFR[temp1] &= ~(0xF << ( 4 * temp2 ) ); //clearing
 		pGPIOHandle->pGPIOx->AFR[temp1] |= (pGPIOHandle->GPIO_PinConfig.GPIO_PinAltFunMode << ( 4 * temp2 ) );
 	}
@@ -256,9 +263,71 @@ void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
 /*
  * IRQ Configuration and ISR handling
  */
-void GPIO_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnorDi);
-void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
-void GPIO_IRQHandling(uint8_t PinNumber);
+
+void GPIO_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnorDi)
+{
+	if (EnorDi == ENABLE)
+	{
+		if (IRQNumber <= 31)
+		{
+			// pointer because NVIC_ISERx = uint32_t* from definition
+			// needs to be deferenced in order to equal an integer value
+			*NVIC_ISER0 |= (1 << IRQNumber);
+		}
+		else if (IRQNumber > 31 && IRQNumber <= 63)
+		{
+			// %32 gives the correct bit position of a IRQ number between 63 and 32
+			*NVIC_ISER1 |= (1 << (IRQNumber % 32));
+		}
+		else if (IRQNumber > 63 && IRQNumber <= 95)
+		{
+			*NVIC_ISER2 |= (1 << (IRQNumber % 64));
+		}
+	}
+	else
+	{
+		if (IRQNumber <= 31)
+		{
+			// pointer because NVIC_ICERx = uint32_t* from definition
+			// needs to be deferenced in order to equal an integer value
+			*NVIC_ICER0 |= (1 << IRQNumber);
+		}
+		else if (IRQNumber > 31 && IRQNumber <= 63)
+		{
+			// %32 gives the correct bit position of a IRQ number between 63 and 32
+			*NVIC_ICER1 |= (1 << (IRQNumber % 32));
+		}
+		else if (IRQNumber > 63 && IRQNumber <= 95)
+		{
+			*NVIC_ICER2 |= (1 << (IRQNumber % 64));
+		}
+	}
+}
+
+
+void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority)
+{
+	uint8_t iprx_reg_num = IRQNumber / 4;
+	uint8_t iprx_bit_position = IRQNumber % 4;
+
+	// adding by iprx_reg_num * 4 moves us iprx_reg_num # of bytes in the memory location
+	// shifted by 8 because each register is split into 4 differnt sections of 8 bits each
+
+	uint8_t shift_amount = (8 * iprx_bit_position) + (8 - NUM_NOT_USED_PR_BITS);
+
+	*(NVIC_PR_BASEADDR + (iprx_reg_num * 4)) |= (IRQPriority << (shift_amount));
+
+}
+
+
+void GPIO_IRQHandling(uint8_t PinNumber)
+{
+	if (EXTI->PR & (1 << PinNumber))
+	{
+		// bit is cleared by setting it to 1
+		EXTI->PR |= (1 << PinNumber);
+	}
+}
 
 
 #endif /* STM32F446XX_GPIO_DRIVER_C_ */
