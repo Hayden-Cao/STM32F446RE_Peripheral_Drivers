@@ -138,8 +138,8 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 		uint8_t temp1 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 4;
 		uint8_t temp2 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 4;
 		uint8_t portcode = GPIO_BASEADDR_TO_CODE(pGPIOHandle->pGPIOx);
-		SYSCFG->EXTICR[temp1] = portcode << (temp2 * 4);
 		SYSCFG_PCLK_EN();
+		SYSCFG->EXTICR[temp1] = portcode << (temp2 * 4);
 		// Unmasks the interrupt so the MCU can read the interrupt
 		EXTI->IMR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
 	}
@@ -315,7 +315,7 @@ void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority)
 
 	uint8_t shift_amount = (8 * iprx_bit_position) + (8 - NUM_NOT_USED_PR_BITS);
 
-	*(NVIC_PR_BASEADDR + (iprx_reg_num * 4)) |= (IRQPriority << (shift_amount));
+	*(NVIC_PR_BASEADDR + (iprx_reg_num)) |= (IRQPriority << (shift_amount));
 
 }
 
