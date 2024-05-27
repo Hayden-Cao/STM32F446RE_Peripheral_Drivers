@@ -37,6 +37,7 @@
  * Register Base Addresses
  */
 
+// GPIO
 #define GPIOA_ADDR 			AHB1_ADDR
 #define GPIOB_ADDR 			(AHB1_ADDR + 0x0400)
 #define GPIOC_ADDR			(AHB1_ADDR + 0x0800)
@@ -45,9 +46,17 @@
 #define GPIOF_ADDR 			(AHB1_ADDR + 0x1400)
 #define GPIOG_ADDR 			(AHB1_ADDR + 0x1800)
 #define GPIOH_ADDR 			(AHB1_ADDR + 0x1C00)
+
+// Interrupts
 #define RCC_ADDR			(AHB1_ADDR + 0x3800)
 #define SYSCFG_ADDR			(APB2_ADDR + 0x3800)
 #define EXTI_ADDR			(APB2_ADDR + 0x3C00)
+
+// SPI
+#define SPI1_ADDR			(APB2_ADDR + 0x3000)
+#define SPI2_ADDR			(APB1_ADDR + 0x3800)
+#define SPI3_ADDR			(APB1_ADDR + 0x3C00)
+#define SPI4_ADDR			(APB2_ADDR + 0x3400)
 
 
 /*
@@ -127,6 +136,10 @@ typedef struct
 
 } EXTI_RegDef_t;
 
+/*
+ * SYSCFG Register Struct
+ */
+
 typedef struct
 {
 	__vo uint32_t MEMRMP;
@@ -139,6 +152,25 @@ typedef struct
 
 
 } SYSCFG_RegDef_t;
+
+
+/*
+ * SPI Register Struct
+ */
+
+typedef struct
+{
+	__vo uint32_t CR1;
+	__vo uint32_t CR2;
+	__vo uint32_t SR;
+	__vo uint32_t DR;
+	__vo uint32_t CRCCPR;
+	__vo uint32_t RXCRCR;
+	__vo uint32_t TXCRCR;
+	__vo uint32_t I2SCFGR;
+	__vo uint32_t I2SPR;
+
+}SPI_RegDef_t;
 
 
 /*
@@ -158,6 +190,11 @@ typedef struct
 #define RCC 							((RCC_RegDef_t*)RCC_ADDR)
 #define EXTI							((EXTI_RegDef_t*)EXTI_ADDR)
 #define SYSCFG							((SYSCFG_RegDef_t*)SYSCFG_ADDR)
+
+#define SPI1							((SPI_RegDef_t*)SPI1_ADDR)
+#define SPI2							((SPI_RegDef_t*)SPI2_ADDR)
+#define SPI3							((SPI_RegDef_t*)SPI3_ADDR)
+#define SPI4							((SPI_RegDef_t*)SPI4_ADDR)
 
 
 /*
@@ -211,11 +248,44 @@ typedef struct
 										(x == GPIOG) ? 6 : 0 )
 
 
+#define GPIO_PIN_NUM_0					0
+#define GPIO_PIN_NUM_1					1
+#define GPIO_PIN_NUM_2					2
+#define GPIO_PIN_NUM_3					3
+#define GPIO_PIN_NUM_4					4
+#define GPIO_PIN_NUM_5					5
+#define GPIO_PIN_NUM_6					6
+#define GPIO_PIN_NUM_7					7
+#define GPIO_PIN_NUM_8					8
+#define GPIO_PIN_NUM_9					9
+#define GPIO_PIN_NUM_10					10
+#define GPIO_PIN_NUM_11					11
+#define GPIO_PIN_NUM_12					12
+#define GPIO_PIN_NUM_13					13
+#define GPIO_PIN_NUM_14					14
+#define GPIO_PIN_NUM_15					15
+
+
 /*
  * SYSCFG Clock Enable
  */
 
 #define SYSCFG_PCLK_EN() 				(RCC->APB2ENR |= (1 << 14))
+
+/*
+ * SPI Clock Enable and Disable
+ */
+#define SPI1_PCLK_EN()					(RCC->APB2ENR |= (1 << 12))
+#define SPI2_PCLK_EN()					(RCC->APB1ENR |= (1 << 14))
+#define SPI3_PCLK_EN()					(RCC->APB1ENR |= (1 << 15))
+#define SPI4_PCLK_EN()					(RCC->APB2ENR |= (1 << 13))
+
+
+#define SPI1_PCLK_DI()					(RCC->APB2ENR &= ~(1 << 12))
+#define SPI2_PCLK_DI()					(RCC->APB1ENR &= ~(1 << 14))
+#define SPI3_PCLK_DI()					(RCC->APB1ENR &= ~(1 << 15))
+#define SPI4_PCLK_DI()					(RCC->APB2ENR &= ~(1 << 13))
+
 
 /*
  * Interrupt Request Positions from Table 38 of reference manual
