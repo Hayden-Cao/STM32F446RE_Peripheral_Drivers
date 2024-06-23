@@ -47,6 +47,15 @@ void SPI2_Init()
 
 }
 
+void Testing_Delay()
+{
+    for(int i = 0; i < 50000; i++)
+    {
+        
+    }
+
+}
+
 
 int main (void)
 {  
@@ -60,6 +69,7 @@ int main (void)
     for(;;)
     {
         SPI_SendData(SPI2, &buf, 2);
+        Testing_Delay();
     }
 
     return 0;
