@@ -126,9 +126,10 @@ void SPI_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnorDi);
 void SPI_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
 void SPI_IRQHandling(SPI_RegDef_t *pSPIHandle);
 
-
 // Other Control Functions
 
 uint8_t SPI_GetFlagStatus(SPI_RegDef_t *pSPIx, uint32_t FlagName);
+void SPI_PeripheralControl(SPI_RegDef_t *pSPIx, uint8_t EnOrDi);
+void SPI_SSIControl(SPI_RegDef_t *pSPIx, uint8_t EnOrDi);
 
 #endif /* STM32F446XX_SPI_DRIVER_H_ */

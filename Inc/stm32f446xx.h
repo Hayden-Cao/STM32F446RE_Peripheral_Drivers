@@ -389,15 +389,8 @@ typedef struct
 #define SPI_SR_BSY					 	7
 #define SPI_SR_FRE					 	8
 
-/*
-*	SPI Flags
-*/
 
-#define SPI_TXE_FLAG					(1 << SPI_SR_TXE)
-#define SPI_RXNE_FLAG					(1 << SPI_SR_RXNE)
-#define SPI_BUSY_FLAG					(1 << SPI_SR_BSY)		// mask info the the TXE flag
 
 
 
 #endif /* STM32F446XX_H_ */
-
