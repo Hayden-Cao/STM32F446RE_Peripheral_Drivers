@@ -138,7 +138,7 @@ void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t length)
 }
 
 
-void SPI_ReceiveData(SPI_RegDef_t *pSPIHandle, uint8_t *pRxBuffer, uint32_t length )
+void SPI_ReceiveData(SPI_RegDef_t *pSPIx, uint8_t *pRxBuffer, uint32_t length )
 {
 	//length is in number of bytes
 	while(length > 0)
@@ -150,16 +150,16 @@ void SPI_ReceiveData(SPI_RegDef_t *pSPIHandle, uint8_t *pRxBuffer, uint32_t leng
 		if (pSPIx->CR1 & (1 << SPI_CR1_DFF))
 		{
 			// 16 bit mode therefore we need to typecase the uint8_t *pTxBuffer to 16 bit
-			*((uint16_t*)pTxBuffer) = pSPIx->DR;
+			*((uint16_t*)pRxBuffer) = pSPIx->DR;
 			length--;
 			length--;
-			(uint16_t*)pTxBuffer++;		// addition to make it point to the next data in the buffer
+			(uint16_t*)pRxBuffer++;		// addition to make it point to the next data in the buffer
 		}
 		else
 		{
-			*(pTxBuffer) = pSPIx->DR;
+			*(pRxBuffer) = pSPIx->DR;
 			length--;
-			pTxBuffer++;
+			pRxBuffer++;
 		}
 	}
 }
