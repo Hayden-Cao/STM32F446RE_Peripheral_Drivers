@@ -394,9 +394,6 @@ typedef struct
 *	SPI Flags
 */
 
-#define SPI_TXE_FLAG					(1 << SPI_SR_TXE)
-#define SPI_RXNE_FLAG					(1 << SPI_SR_RXNE)
-#define SPI_BUSY_FLAG					(1 << SPI_SR_BSY)		// mask info the the TXE flag
 
 
 

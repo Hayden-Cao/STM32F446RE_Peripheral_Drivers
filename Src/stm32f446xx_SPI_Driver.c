@@ -122,21 +122,47 @@ void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t length)
 		if (pSPIx->CR1 & (1 << SPI_CR1_DFF))
 		{
 			// 16 bit mode therefore we need to typecase the uint8_t *pTxBuffer to 16 bit
-			pSPIx->DR = *((uint16_t*)pTxBuffer);	
+			pSPIx->DR = *((uint16_t*)pTxBuffer);
 			length--;
 			length--;
 			(uint16_t*)pTxBuffer++;		// addition to make it point to the next data in the buffer
 		}
-		else 
+		else
 		{
 			pSPIx->DR = *pTxBuffer;
-			length--; 
+			length--;
 			pTxBuffer++;
 		}
 	}
 
 }
-void SPI_ReceiveData(SPI_RegDef_t *pSPIHandle, uint8_t *pRxBuffer, uint32_t length );
+
+
+void SPI_ReceiveData(SPI_RegDef_t *pSPIx, uint8_t *pRxBuffer, uint32_t length )
+{
+	//length is in number of bytes
+	while(length > 0)
+	{
+		// wait until RXNE is set
+		while(SPI_GetFlagStatus(pSPIx, SPI_RXNE_FLAG) == RESET);
+
+		// checking dff bit
+		if (pSPIx->CR1 & (1 << SPI_CR1_DFF))
+		{
+			// 16 bit mode therefore we need to typecase the uint8_t *pTxBuffer to 16 bit
+			*((uint16_t*)pRxBuffer) = pSPIx->DR;
+			length--;
+			length--;
+			(uint16_t*)pRxBuffer++;		// addition to make it point to the next data in the buffer
+		}
+		else
+		{
+			*(pRxBuffer) = pSPIx->DR;
+			length--;
+			pRxBuffer++;
+		}
+	}
+}
 
 // IRQ Config and ISR Handling
 
@@ -144,18 +170,44 @@ void SPI_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnorDi);
 void SPI_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
 void SPI_IRQHandling(SPI_RegDef_t *pSPIHandle);
 
-// other functions
-
 uint8_t SPI_GetFlagStatus(SPI_RegDef_t *pSPIx, uint32_t FlagName)
 {
 	if (pSPIx->SR & FlagName)
 	{
 		return SET;
-	} 
+	}
 	else
 	{
 		return RESET;
 	}
 }
+
+
+void SPI_PeripheralControl(SPI_RegDef_t *pSPIx, uint8_t EnOrDi)
+{
+
+	if (EnOrDi == ENABLE)
+	{
+		pSPIx->CR1 |= (1 << SPI_CR1_SPE);
+	}
+	else
+	{
+		pSPIx->CR1 &= ~(1 << SPI_CR1_SPE);
+	}
+}
+
+void SPI_SSIControl(SPI_RegDef_t *pSPIx, uint8_t EnOrDi)
+{
+
+	if (EnOrDi == ENABLE)
+	{
+		pSPIx->CR1 |= (1 << SPI_CR1_SSI);
+	}
+	else
+	{
+		pSPIx->CR1 &= ~(1 << SPI_CR1_SSI);
+	}
+}
+
 
 #endif /* STM32F446XX_SPI_DRIVER_C_ */
