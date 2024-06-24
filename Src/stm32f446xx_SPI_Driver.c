@@ -133,6 +133,7 @@ void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t length)
 			length--;
 			pTxBuffer++;
 		}
+
 	}
 
 }
