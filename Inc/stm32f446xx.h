@@ -390,14 +390,7 @@ typedef struct
 #define SPI_SR_FRE					 	8
 
 
-/*
-*	SPI Flags
-*/
-
 
 
 
 #endif /* STM32F446XX_H_ */
-
-
-
