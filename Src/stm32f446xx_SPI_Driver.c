@@ -106,7 +106,11 @@ void SPI_Init(SPI_Handle_t *pSPIHandle)
 	pSPIHandle->pSPIx->CR1 = tempreg;
 
 }
-void SPI_DeInit(SPI_RegDef_t *pSPIx);
+
+void SPI_DeInit(SPI_RegDef_t *pSPIx)
+{
+	pSPIx->CR1 = 0;
+}
 
 // Data send and receive
 
@@ -168,8 +172,43 @@ void SPI_ReceiveData(SPI_RegDef_t *pSPIx, uint8_t *pRxBuffer, uint32_t length )
 // IRQ Config and ISR Handling
 
 void SPI_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnorDi);
+
+
 void SPI_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
-void SPI_IRQHandling(SPI_RegDef_t *pSPIHandle);
+
+
+void SPI_IRQHandling(SPI_Handle_t *pSPIHandle)
+{
+	uint8_t temp1, temp2;
+
+	// stores value of TXE and if the interuppt for TXE is enabled
+	temp1 = pSPIHandle->pSPIx->SR & ( 1 << SPI_SR_TXE);
+	temp2 = pSPIHandle->pSPIx->CR2 & ( 1 << SPI_CR2_TXEIE);
+
+	if (temp1 && temp2)
+	{
+		SPI_TXE_Interrupt_Handle();
+	}
+
+	// stores value of TXE and if the interuppt for TXE is enabled
+	temp1 = pSPIHandle->pSPIx->SR & ( 1 << SPI_SR_RXNE);
+	temp2 = pSPIHandle->pSPIx->CR2 & ( 1 << SPI_CR2_RXNEIE);
+
+	if (temp1 && temp2)
+	{
+		SPI_RXNE_Interrupt_Handle();
+	}
+
+	temp1 = pSPIHandle->pSPIx->SR & (1 << SPI_SR_OVR);
+	temp2 = pSPIHandle->pSPIx->CR2 & (1 << SPI_CR2_ERRIE);
+
+
+	if (temp1 && temp2)
+	{
+		SPI_OVR_Err_Interrupt_Handle();
+	}
+
+}
 
 uint8_t SPI_GetFlagStatus(SPI_RegDef_t *pSPIx, uint32_t FlagName)
 {
@@ -209,6 +248,79 @@ void SPI_SSIControl(SPI_RegDef_t *pSPIx, uint8_t EnOrDi)
 		pSPIx->CR1 &= ~(1 << SPI_CR1_SSI);
 	}
 }
+
+
+// Private SPI Interrupt Handling
+
+static void SPI_TXE_Interrupt_Handle(SPI_Handle_t *pSPIHandle)
+{
+	if ((pSPIHandle->pSPIx->CR1 & ( 1 << SPI_CR1_DFF)))
+	{
+		pSPIHandle->pSPIx->DR = *((uint16_t*)pSPIHandle->pTxBuffer);
+		pSPIHandle->TxLen--;
+		pSPIHandle->TxLen--;
+		(uint16_t*)pSPIHandle->pTxBuffer++;
+	}
+	else
+	{
+		pSPIHandle->pSPIx->DR = *(pSPIHandle->pTxBuffer);
+		pSPIHandle->TxLen--;
+		pSPIHandle->TxLen--;
+		pSPIHandle->pTxBuffer++;
+	}
+
+	if (!pSPIHandle->TxLen)
+	{
+		pSPIHandle->pSPIx->CR2 &= ~(1 << SPI_CR2_TXEIE);
+		pSPIHandle->pTxBuffer = NULL;
+		pSPIHandle->TxLen =0;
+		pSPIHandle->TxState = SPI_READY;
+
+	}
+}
+
+
+static void SPI_RXNE_Interrupt_Handle(SPI_Handle_t *pSPIHandle)
+{
+	//do rxing as per the dff
+	if(pSPIHandle->pSPIx->CR1 & ( 1 << 11))
+	{
+		//16 bit
+		*((uint16_t*)pSPIHandle->pRxBuffer) = (uint16_t) pSPIHandle->pSPIx->DR;
+		pSPIHandle->RxLen -= 2;
+		pSPIHandle->pRxBuffer++;
+		pSPIHandle->pRxBuffer++;
+
+	}else
+	{
+		//8 bit
+		*(pSPIHandle->pRxBuffer) = (uint8_t) pSPIHandle->pSPIx->DR;
+		pSPIHandle->RxLen--;
+		pSPIHandle->pRxBuffer++;
+	}
+
+	if(! pSPIHandle->RxLen)
+	{
+		//reception is complete
+		SPI_CloseReception(pSPIHandle);
+		SPI_ApplicationEventCallback(pSPIHandle,SPI_EVENT_RX_CMPLT);
+	}
+
+}
+
+static void SPI_OVR_Err_Interrupt_Handle(SPI_Handle_t *pSPIHandle)
+{
+	uint8_t temp;
+	// clearing OVR Flag
+	if (pSPIHandle->TxState != SPI_BUSY_IN_TX)
+	{
+
+	}
+
+}
+
+void SPI_CloseTransmission(SPI_Handle_t *pSPIHandle);
+void SPI_CloseRecpetion(SPI_Handle_t *pSPIHandle);
 
 
 #endif /* STM32F446XX_SPI_DRIVER_C_ */

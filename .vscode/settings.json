@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "stm32f446xx_spi_driver.h": "c",
+        "stm32f446xx.h": "c"
+    }
+}

@@ -26,6 +26,12 @@ typedef struct
 {
 	SPI_RegDef_t *pSPIx; 		// base addresses of SPIx peripheral registers
 	SPI_Config_t SPIConfig;
+	uint8_t 		*pTxBuffer; /* !< To store the app. Tx buffer address > */
+	uint8_t 		*pRxBuffer;	/* !< To store the app. Rx buffer address > */
+	uint32_t 		TxLen;		/* !< To store Tx len > */
+	uint32_t 		RxLen;		/* !< To store Tx len > */
+	uint8_t 		TxState;	/* !< To store Tx state > */
+	uint8_t 		RxState;	/* !< To store Rx state > */
 
 }	SPI_Handle_t;
 
@@ -105,6 +111,13 @@ typedef struct
 #define SPI_RXNE_FLAG   ( 1 << SPI_SR_RXNE)
 #define SPI_BUSY_FLAG   ( 1 << SPI_SR_BSY)
 
+/*
+ * Possible SPI Application events
+ */
+#define SPI_EVENT_TX_CMPLT   1
+#define SPI_EVENT_RX_CMPLT   2
+#define SPI_EVENT_OVR_ERR    3
+#define SPI_EVENT_CRC_ERR    4
 
 
 // Clock Control
@@ -131,5 +144,7 @@ void SPI_IRQHandling(SPI_RegDef_t *pSPIHandle);
 uint8_t SPI_GetFlagStatus(SPI_RegDef_t *pSPIx, uint32_t FlagName);
 void SPI_PeripheralControl(SPI_RegDef_t *pSPIx, uint8_t EnOrDi);
 void SPI_SSIControl(SPI_RegDef_t *pSPIx, uint8_t EnOrDi);
+void SPI_CloseTransmission(SPI_Handle_t *pSPIHandle);
+void SPI_CloseRecpetion(SPI_Handle_t *pSPIHandle);
 
 #endif /* STM32F446XX_SPI_DRIVER_H_ */
