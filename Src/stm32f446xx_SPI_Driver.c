@@ -187,7 +187,7 @@ void SPI_IRQHandling(SPI_Handle_t *pSPIHandle)
 
 	if (temp1 && temp2)
 	{
-		SPI_TXE_Interrupt_Handle();
+		//SPI_TXE_Interrupt_Handle();
 	}
 
 	// stores value of TXE and if the interuppt for TXE is enabled
@@ -196,7 +196,7 @@ void SPI_IRQHandling(SPI_Handle_t *pSPIHandle)
 
 	if (temp1 && temp2)
 	{
-		SPI_RXNE_Interrupt_Handle();
+		//SPI_RXNE_Interrupt_Handle();
 	}
 
 	temp1 = pSPIHandle->pSPIx->SR & (1 << SPI_SR_OVR);
@@ -205,7 +205,7 @@ void SPI_IRQHandling(SPI_Handle_t *pSPIHandle)
 
 	if (temp1 && temp2)
 	{
-		SPI_OVR_Err_Interrupt_Handle();
+		//SPI_OVR_Err_Interrupt_Handle();
 	}
 
 }
@@ -302,8 +302,8 @@ static void SPI_RXNE_Interrupt_Handle(SPI_Handle_t *pSPIHandle)
 	if(! pSPIHandle->RxLen)
 	{
 		//reception is complete
-		SPI_CloseReception(pSPIHandle);
-		SPI_ApplicationEventCallback(pSPIHandle,SPI_EVENT_RX_CMPLT);
+		//SPI_CloseReception(pSPIHandle);
+		//SPI_ApplicationEventCallback(pSPIHandle,SPI_EVENT_RX_CMPLT);
 	}
 
 }
